@@ -1,0 +1,41 @@
+public void Run(GoogleAdsClient client, long managerCustomerId)
+{
+    // Get the CustomerService.
+    CustomerServiceClient customerService = client.GetService(Services.V17.CustomerService);
+
+    Customer customer = new Customer()
+    {
+        DescriptiveName = $"Account created with CustomerService on '{DateTime.Now}'",
+
+        // For a list of valid currency codes and time zones see this documentation:
+        // https://developers.google.com/google-ads/api/reference/data/codes-formats#codes_formats.
+        CurrencyCode = "USD",
+        TimeZone = "America/New_York",
+
+        // The below values are optional. For more information about URL
+        // options see: https://support.google.com/google-ads/answer/6305348.
+        TrackingUrlTemplate = "{lpurl}?device={device}",
+        FinalUrlSuffix = "keyword={keyword}&matchtype={matchtype}&adgroupid={adgroupid}"
+    };
+
+    try
+    {
+        // Create the account.
+        CreateCustomerClientResponse response = customerService.CreateCustomerClient(
+            managerCustomerId.ToString(), customer);
+
+        // Display the result.
+        Console.WriteLine($"Created a customer with resource name " +
+            $"'{response.ResourceName}' under the manager account with customer " +
+            $"ID '{managerCustomerId}'");
+    }
+    catch (GoogleAdsException e)
+    {
+        Console.WriteLine("Failure:");
+        Console.WriteLine($"Message: {e.Message}");
+        Console.WriteLine($"Failure: {e.Failure}");
+        Console.WriteLine($"Request ID: {e.RequestId}");
+        throw;
+    }
+}
+      
